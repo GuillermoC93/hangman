@@ -21,6 +21,8 @@ class Game
       guess = gets.chomp.downcase
       if @guessed_letters.include?(guess)
         puts 'Please input a different guess.'
+      elsif guess =~ /[0-9]/ || guess.length > 1
+        puts 'Please input only 1 letter.'
       else
         return guess
       end
@@ -29,22 +31,42 @@ class Game
 
   def start_game
     puts 'Welcome to Hangman.'
-    puts "You have #{guesses} guesses remaining."
     puts @hidden_word
     puts 'Guess a letter.'
-    puts guess_check
+    puts "You have #{guesses} guesses remaining."
+    game_loop
+    puts 'Thanks for playing.'
   end
 
-  def guess_check
-    guess = player_guess
+  def check_guess(guess)
     @guessed_letters << guess
     if word.include?(guess)
-      word.each_char.with_index do |c, idx|
-        if word[idx] == guess
-          @hidden_word[idx] = guess
-        end
+      word.each_char.with_index do |_c, idx|
+        @hidden_word[idx] = guess if word[idx] == guess
       end
+    else
+      @guesses -= 1
     end
     @hidden_word
+  end
+
+  def game_loop
+    while guesses.positive?
+      game_round
+      if win?
+        puts 'You won the game!'
+        break
+      end
+    end
+  end
+
+  def game_round
+    puts check_guess(player_guess)
+    puts "You have #{guesses} guesses remaining."
+    puts 'Guess a letter.'
+  end
+
+  def win?
+    @hidden_word == word
   end
 end
