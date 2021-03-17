@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Game
   attr_reader :guesses, :word, :hidden_word
 
@@ -16,16 +18,40 @@ class Game
     random
   end
 
+  def save
+    puts 'Enter a name for your save file.'
+    save_name = gets.chomp.downcase
+    serialize(save_name)
+  end
+
   def player_guess
     loop do
       guess = gets.chomp.downcase
-      if @guessed_letters.include?(guess)
+      if guess == 'save'
+        save
+        break
+      elsif @guessed_letters.include?(guess)
         puts 'Please input a different guess.'
       elsif guess =~ /[0-9]/ || guess.length > 1
         puts 'Please input only 1 letter.'
       else
         return guess
       end
+    end
+  end
+
+  def load_or_play
+    puts 'Press "1" for a new game.'
+    puts 'Press "2" to load a saved game.'
+    answer = gets.chomp
+    case answer
+    when '1' then start_game
+    when '2'
+      puts 'Enter the save file name.'
+      file_name = gets.chomp.downcase
+      loaded = deserialize(file_name)
+      loaded.start_game
+    else puts 'Incorrect input.'
     end
   end
 
@@ -63,10 +89,28 @@ class Game
   def game_round
     puts check_guess(player_guess)
     puts "You have #{guesses} guesses remaining."
-    puts 'Guess a letter.'
+    str = 'Guessed letters are: '
+    @guessed_letters.map { |c| str << ' ' << c }
+    puts str
+    puts 'Guess a letter or type "save" to save game.'
   end
 
   def win?
     @hidden_word == word
   end
+
+  def serialize(save_name)
+    yaml = YAML.dump(self)
+    game_file = File.new(File.join('saved_games', "#{save_name}.yaml"), 'w+')
+    game_file.write(yaml)
+  end
+
+  def deserialize(save_name)
+    game_file = File.new(File.join('saved_games', "#{save_name}.yaml"))
+    yaml = game_file.read
+    YAML.load(yaml)
+  end
 end
+
+play = Game.new
+play.load_or_play
