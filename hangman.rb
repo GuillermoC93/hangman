@@ -1,7 +1,7 @@
 require 'yaml'
 
 class Game
-  attr_reader :guesses, :word, :hidden_word
+  attr_reader :guesses, :hidden_word
 
   def initialize
     @word = random_word
@@ -12,9 +12,7 @@ class Game
 
   def random_word
     random = File.readlines('5desk.txt').sample.strip.downcase
-    until random.length.between?(5, 12)
-      random = File.readlines('5desk.txt').sample.strip.downcase
-    end
+    random = File.readlines('5desk.txt').sample.strip.downcase until random.length.between?(5, 12)
     random
   end
 
@@ -83,15 +81,16 @@ class Game
         puts 'You won the game!'
         break
       end
+      puts 'You lose :(' if @guesses.zero?
     end
   end
 
   def game_round
     puts check_guess(player_guess)
     puts "You have #{guesses} guesses remaining."
-    str = 'Guessed letters are: '
+    guessed_str = 'Guessed letters are: '
     @guessed_letters.map { |c| str << ' ' << c }
-    puts str
+    puts guessed_str
     puts 'Guess a letter or type "save" to save game.'
   end
 
