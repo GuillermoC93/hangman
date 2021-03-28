@@ -1,7 +1,7 @@
 require 'yaml'
 
 class Game
-  attr_reader :guesses, :hidden_word
+  attr_reader :guesses, :hidden_word, :word
 
   def initialize
     @word = random_word
