@@ -1,5 +1,6 @@
 require 'yaml'
 
+# hangman game class
 class Game
   attr_reader :guesses, :hidden_word, :word
 
