@@ -90,7 +90,7 @@ class Game
     puts check_guess(player_guess)
     puts "You have #{guesses} guesses remaining."
     guessed_str = 'Guessed letters are: '
-    @guessed_letters.map { |c| str << ' ' << c }
+    @guessed_letters.map { |c| guessed_str << ' ' << c }
     puts guessed_str
     puts 'Guess a letter or type "save" to save game.'
   end
